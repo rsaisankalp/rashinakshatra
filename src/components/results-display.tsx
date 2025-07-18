@@ -13,7 +13,7 @@ export function ResultsDisplay({ result, onReset }: ResultsDisplayProps) {
     <Card className="text-center bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg animate-in fade-in-50 duration-500 w-full">
       <CardHeader>
         <CardTitle className="font-headline text-3xl text-foreground">
-          Namaste, {result.inputName}
+          Jai Gurudev, {result.inputName}
         </CardTitle>
         <CardDescription className="font-body text-base">
           Here are your verified details.
