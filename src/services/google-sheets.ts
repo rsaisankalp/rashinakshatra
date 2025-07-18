@@ -34,7 +34,7 @@ export async function appendToSheet(rowData: SheetRow) {
             'WhatsApp Number': rowData.whatsapp,
             'Date of Birth': rowData.dob,
             'Time of Birth': rowData.tob,
-            'Timestamp': new Date().toISOString(),
+            Timestamp: new Date().toISOString(),
         });
         return { success: true };
     } catch (error) {
