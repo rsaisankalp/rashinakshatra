@@ -50,9 +50,9 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8 font-body">
       <div className="w-full max-w-md mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">Sankalpa Siddhi</h1>
+          <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">Find My Rashi Nakshatra</h1>
           <p className="text-muted-foreground mt-2">
-            Find your Rashi and Nakshatra before taking Sankalpa.
+            Enter your birth details to discover your Rashi and Nakshatra.
           </p>
         </div>
 
