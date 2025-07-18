@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { User, MessageCircle, Calendar, Clock } from "lucide-react"
+import { User, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { CustomTimePicker } from "./custom-time-picker";
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -32,13 +34,16 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits.").min(1, "WhatsApp number is required."),
+  whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits.").min(10, "A valid 10-digit WhatsApp number is required."),
   day: z.string({ required_error: "Day is required." }),
   month: z.string({ required_error: "Month is required." }),
   year: z.string({ required_error: "Year is required." }),
   tob: z.string({
     required_error: "A time of birth is required.",
-  }).regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Use HH:MM.")
+  }).regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Use HH:MM."),
+  consent: z.boolean().default(false).refine(val => val === true, {
+    message: "You must agree to receive updates."
+  }),
 }).refine(data => {
     const { day, month, year } = data;
     if (!day || !month || !year) return true; // Let individual field errors handle this
@@ -60,6 +65,7 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
       name: "",
       whatsapp: "",
       tob: "",
+      consent: false,
     },
   });
 
@@ -186,12 +192,32 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
                   )}
                 />
               </div>
-            </div>
 
+              <FormField
+                control={form.control}
+                name="consent"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I agree to receive important updates about pujas and other sacred events.
+                      </FormLabel>
+                       <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6">
-              Find My Rashi
+              Find My Rashi Nakshatra
             </Button>
           </CardFooter>
         </form>
