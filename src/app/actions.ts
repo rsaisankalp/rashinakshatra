@@ -1,5 +1,7 @@
 'use server';
 import { z } from 'zod';
+import { appendToSheet } from '@/services/google-sheets';
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -66,6 +68,20 @@ export async function getRashiAndNakshatra(
         console.error("Invalid API response:", data);
         return { error: "Could not retrieve Rashi and Nakshatra. Please check your details and try again." };
     }
+
+    // Save to Google Sheet
+    const sheetData = {
+      name: validatedData.name,
+      whatsapp: validatedData.whatsapp,
+      dob: bdate,
+      tob: validatedData.tob,
+    };
+    const sheetResult = await appendToSheet(sheetData);
+    if(sheetResult.error){
+        console.warn("Could not save to Google Sheet:", sheetResult.error);
+        // We can decide if this should be a hard error for the user. For now, we'll just log it.
+    }
+
 
     return { data: {
         Rashi: data.Rashi,
