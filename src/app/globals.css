@@ -13,7 +13,7 @@
     --popover: 50 83% 97%; /* Lighter cream */
     --popover-foreground: 0 0% 29%;
 
-    --primary: 26 92% 54%; /* #f57921 */
+    --primary: 34 90% 58%; /* #F4A134 */
     --primary-foreground: 0 0% 100%; /* #ffffff */
 
     --secondary: 35 85% 60%; /* Lighter orange/saffron */
@@ -30,7 +30,7 @@
 
     --border: 50 20% 85%;
     --input: 50 20% 92%;
-    --ring: 26 92% 54%; /* #f57921 */
+    --ring: 34 90% 58%; /* #F4A134 */
 
     --radius: 0.5rem;
 
@@ -43,12 +43,12 @@
     /* Sidebar variables */
     --sidebar-background: 50 83% 96%;
     --sidebar-foreground: 0 0% 29%;
-    --sidebar-primary: 26 92% 54%;
+    --sidebar-primary: 34 90% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 35 85% 60%;
     --sidebar-accent-foreground: 0 0% 20%;
     --sidebar-border: 50 20% 85%;
-    --sidebar-ring: 26 92% 54%;
+    --sidebar-ring: 34 90% 58%;
   }
 }
 
