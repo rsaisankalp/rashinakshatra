@@ -1,10 +1,9 @@
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
-import { format } from "date-fns"
-import { CalendarIcon, User, MessageCircle } from "lucide-react"
+import { User, MessageCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,9 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { cn } from "@/lib/utils"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import type { FormValues } from "@/app/actions";
 
@@ -39,6 +36,25 @@ type SankalpaFormProps = {
   onSubmit: (values: FormValues) => void;
 };
 
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 101 }, (_, i) => (currentYear - i).toString());
+
+const months = [
+  { value: "0", label: "January" },
+  { value: "1", label: "February" },
+  { value: "2", label: "March" },
+  { value: "3", label: "April" },
+  { value: "4", label: "May" },
+  { value: "5", label: "June" },
+  { value: "6", label: "July" },
+  { value: "7", label: "August" },
+  { value: "8", label: "September" },
+  { value: "9", label: "October" },
+  { value: "10", label: "November" },
+  { value: "11", label: "December" },
+];
+
+
 export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,10 +64,25 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
     },
   });
 
+  const [year, month] = useWatch({
+    control: form.control,
+    name: ["dob.year", "dob.month"],
+  });
+
+  const daysInMonth = year && month ? new Date(parseInt(year), parseInt(month) + 1, 0).getDate() : 31;
+  const days = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
+
+  const handleFormSubmit = (data: any) => {
+    const { dob, ...rest } = data;
+    const date = new Date(parseInt(dob.year), parseInt(dob.month), parseInt(dob.day));
+    onSubmit({ ...rest, dob: date });
+  };
+
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <CardContent className="space-y-6 pt-6">
             <FormField
               control={form.control}
@@ -85,62 +116,75 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
+            
+            <div>
+              <FormLabel>Date of Birth</FormLabel>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <FormField
+                  control={form.control}
+                  name="dob.month"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
+                          <SelectTrigger><SelectValue placeholder="Month" /></SelectTrigger>
                         </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="tob"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Time of Birth</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        <SelectContent>
+                          {months.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dob.day"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                           <SelectTrigger><SelectValue placeholder="Day" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {days.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="dob.year"
+                  render={({ field }) => (
+                    <FormItem>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                           <SelectTrigger><SelectValue placeholder="Year" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                           {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+               <FormMessage>{form.formState.errors.dob?.message}</FormMessage>
             </div>
+
+            <FormField
+              control={form.control}
+              name="tob"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time of Birth</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} className="h-10 text-base" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-6">
