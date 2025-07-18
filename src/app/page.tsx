@@ -7,21 +7,31 @@ import { ResultsDisplay } from '@/components/results-display';
 import { getRashiAndNakshatra, type RashiData, type FormValues } from '@/app/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
+import { format } from 'date-fns';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RashiData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFormSubmit = async (data: FormValues) => {
+  const handleFormSubmit = async (data: any) => {
     setLoading(true);
     setError(null);
     setResult(null);
 
+    const dob = new Date(parseInt(data.year), parseInt(data.month) - 1, parseInt(data.day));
+    
+    const submissionData: FormValues = {
+      name: data.name,
+      whatsapp: data.whatsapp,
+      dob: dob,
+      tob: data.tob,
+    }
+
     // Artificial delay to demonstrate loading state, as requested
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const response = await getRashiAndNakshatra(data);
+    const response = await getRashiAndNakshatra(submissionData);
 
     if (response.error) {
       setError(response.error);
@@ -41,7 +51,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8 font-body">
       <div className="w-full max-w-md mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">Discover Sacred Pujas</h1>
+          <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">Sankalpa Siddhi</h1>
           <p className="text-muted-foreground mt-2">
             Find your Rashi and Nakshatra before taking Sankalpa.
           </p>

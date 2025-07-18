@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { User, MessageCircle } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -17,27 +16,42 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import type { FormValues } from "@/app/actions";
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+const months = [
+  { value: "1", label: "January" }, { value: "2", label: "February" }, { value: "3", label: "March" },
+  { value: "4", label: "April" }, { value: "5", label: "May" }, { value: "6", label: "June" },
+  { value: "7", label: "July" }, { value: "8", label: "August" }, { value: "9", label: "September" },
+  { value: "10", label: "October" }, { value: "11", label: "November" }, { value: "12", label: "December" }
+];
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
   whatsapp: z.string().optional(),
-  dob: z.date({
-    required_error: "A date of birth is required.",
-  }),
+  day: z.string({ required_error: "Day is required." }),
+  month: z.string({ required_error: "Month is required." }),
+  year: z.string({ required_error: "Year is required." }),
   tob: z.string({
     required_error: "A time of birth is required.",
   }).regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Use HH:MM.")
+}).refine(data => {
+    const { day, month, year } = data;
+    if (!day || !month || !year) return true; // Let individual field errors handle this
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return date.getFullYear() === parseInt(year) && date.getMonth() === parseInt(month) - 1 && date.getDate() === parseInt(day);
+}, {
+    message: "The selected date is invalid.",
+    path: ["day"],
 });
 
+
 type SankalpaFormProps = {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: z.infer<typeof formSchema>) => void;
 };
 
 export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
@@ -92,50 +106,69 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
               )}
             />
             
-            <FormField
-              control={form.control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of Birth</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                        captionLayout="dropdown-buttons"
-                        fromYear={1900}
-                        toYear={new Date().getFullYear()}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div>
+              <FormLabel>Date of Birth</FormLabel>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <FormField
+                  control={form.control}
+                  name="day"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Day" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {days.map(day => <SelectItem key={day} value={day.toString()}>{day}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="month"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {months.map(month => <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="year"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {years.map(year => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+               <FormMessage>{form.formState.errors.day?.message}</FormMessage>
+            </div>
 
             <FormField
               control={form.control}

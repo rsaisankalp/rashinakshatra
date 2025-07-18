@@ -4,51 +4,51 @@
 
 @layer base {
   :root {
-    --background: 47 56% 91%; /* Light Beige #F5F5DC */
-    --foreground: 30 19% 25%; /* Dark Brown #4A4033 */
+    --background: 50 83% 95%; /* #fdfae7 */
+    --foreground: 0 0% 29%; /* #4a4a4a */
 
-    --card: 47 56% 91%; /* Same as background */
-    --card-foreground: 30 19% 25%; /* Dark Brown */
+    --card: 50 83% 95%; /* #fdfae7 */
+    --card-foreground: 0 0% 29%; /* #4a4a4a */
 
-    --popover: 47 56% 93%; /* Slightly lighter beige for popovers */
-    --popover-foreground: 30 19% 25%; /* Dark Brown */
+    --popover: 50 83% 97%; /* Lighter cream */
+    --popover-foreground: 0 0% 29%;
 
-    --primary: 43 89% 55%; /* Soft Saffron #F4C430 */
-    --primary-foreground: 47 100% 98%; /* Light Cream #FFFBEA */
+    --primary: 26 92% 54%; /* #f57921 */
+    --primary-foreground: 0 0% 100%; /* #ffffff */
 
-    --secondary: 25 70% 70%; /* Muted Saffron #E8A87C */
-    --secondary-foreground: 30 19% 25%; /* Dark Brown */
+    --secondary: 35 85% 60%; /* Lighter orange/saffron */
+    --secondary-foreground: 0 0% 20%;
 
-    --muted: 47 30% 85%; /* Lighter Beige #EAE4D3 */
-    --muted-foreground: 30 19% 40%; /* Slightly Lighter Brown #706154 */
+    --muted: 50 40% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 13 83% 64%; /* Warm Terracotta #E07A5F */
-    --accent-foreground: 17 27% 20%; /* Very Dark Brown #4A3B30 */
+    --accent: 35 85% 55%; /* A slightly deeper saffron for accent */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 47 40% 80%; /* Subtle Border #DCD5B7 */
-    --input: 47 40% 85%; /* Slightly Lighter for Input BG #E2DBC7 */
-    --ring: 43 89% 55%; /* Soft Saffron for focus rings */
+    --border: 50 20% 85%;
+    --input: 50 20% 92%;
+    --ring: 26 92% 54%; /* #f57921 */
 
     --radius: 0.5rem;
 
-    --chart-1: 34 90% 58%; /* Original Deep Saffron */
+    --chart-1: 34 90% 58%;
     --chart-2: 45 65% 52%;
     --chart-3: 25 70% 70%;
     --chart-4: 47 56% 70%;
     --chart-5: 30 30% 50%;
 
     /* Sidebar variables */
-    --sidebar-background: 47 56% 95%;
-    --sidebar-foreground: 30 19% 25%;
-    --sidebar-primary: 34 90% 58%; /* Original Deep Saffron */
-    --sidebar-primary-foreground: 47 100% 98%; /* Matches primary-foreground */
-    --sidebar-accent: 45 65% 52%;
-    --sidebar-accent-foreground: 17 27% 20%;
-    --sidebar-border: 47 40% 80%;
-    --sidebar-ring: 34 90% 58%; /* Original Deep Saffron */
+    --sidebar-background: 50 83% 96%;
+    --sidebar-foreground: 0 0% 29%;
+    --sidebar-primary: 26 92% 54%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 85% 60%;
+    --sidebar-accent-foreground: 0 0% 20%;
+    --sidebar-border: 50 20% 85%;
+    --sidebar-ring: 26 92% 54%;
   }
 }
 
