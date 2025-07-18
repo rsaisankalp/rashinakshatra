@@ -1,11 +1,12 @@
 'use server';
 import { z } from 'zod';
-import { format } from 'date-fns';
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits."),
-  dob: z.date(),
+  day: z.string(),
+  month: z.string(),
+  year: z.string(),
   tob: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
 
@@ -23,17 +24,17 @@ export async function getRashiAndNakshatra(
   try {
     const validatedData = formSchema.parse(values);
 
-    const bdate = format(validatedData.dob, 'dd/MM/yyyy');
+    const bdate = `${validatedData.day}/${validatedData.month}/${validatedData.year}`;
     const time = `${validatedData.tob}:00`;
     const name = validatedData.name;
-    const year = new Date().getFullYear().toString();
+    const currentYear = new Date().getFullYear().toString();
     const tz = 'GMT+05:30';
 
     const params = new URLSearchParams({
       bdate,
       PAnth: '0',
       time,
-      year,
+      year: currentYear,
       name,
       tz,
       utm_source: 'myweb',

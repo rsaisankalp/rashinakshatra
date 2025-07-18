@@ -7,7 +7,6 @@ import { ResultsDisplay } from '@/components/results-display';
 import { getRashiAndNakshatra, type RashiData, type FormValues } from '@/app/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
-import { format } from 'date-fns';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -18,17 +17,17 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResult(null);
-
-    const dob = new Date(parseInt(data.year), parseInt(data.month) - 1, parseInt(data.day));
     
     const submissionData: FormValues = {
       name: data.name,
       whatsapp: data.whatsapp,
-      dob: dob,
+      day: data.day,
+      month: data.month,
+      year: data.year,
       tob: data.tob,
     }
 
-    // Artificial delay to demonstrate loading state, as requested
+    // Artificial delay to demonstrate loading state
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     const response = await getRashiAndNakshatra(submissionData);
@@ -57,7 +56,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="min-h-[480px] flex items-center justify-center">
+        <div className="min-h-[520px] flex items-center justify-center">
           {loading ? (
             <LoadingSpinner />
           ) : result ? (
