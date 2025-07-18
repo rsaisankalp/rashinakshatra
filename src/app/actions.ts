@@ -16,6 +16,8 @@ export interface RashiData {
     Rashi: string;
     birthNakshatra: string;
     inputName: string;
+    lunarJanmaTithiMap: string;
+    lunarJanmaMonTithi: string;
 }
 
 export async function getRashiAndNakshatra(
@@ -68,7 +70,9 @@ export async function getRashiAndNakshatra(
     return { data: {
         Rashi: data.Rashi,
         birthNakshatra: data.birthNakshatra,
-        inputName: data.inputName
+        inputName: data.inputName,
+        lunarJanmaTithiMap: data.lunarJanmaTithiMap,
+        lunarJanmaMonTithi: data.lunarJanmaMonTithi
     } };
   } catch (error) {
     console.error(error);
