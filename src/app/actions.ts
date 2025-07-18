@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
-  whatsapp: z.string().optional(),
+  whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits."),
   dob: z.date(),
   tob: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/),
 });
