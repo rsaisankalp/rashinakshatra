@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, useWatch } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { User, MessageCircle } from "lucide-react"
+import { User, MessageCircle, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { CustomTimePicker } from "./custom-time-picker";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -27,12 +28,11 @@ const months = [
 ];
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
-
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits."),
+  whatsapp: z.string().regex(/^\d{10}$/, "WhatsApp number must be 10 digits.").min(1, "WhatsApp number is required."),
   day: z.string({ required_error: "Day is required." }),
   month: z.string({ required_error: "Month is required." }),
   year: z.string({ required_error: "Year is required." }),
@@ -49,7 +49,6 @@ const formSchema = z.object({
     path: ["day"],
 });
 
-
 type SankalpaFormProps = {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
 };
@@ -60,6 +59,7 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
     defaultValues: {
       name: "",
       whatsapp: "",
+      tob: "",
     },
   });
 
@@ -69,7 +69,7 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
 
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
+    <Card className="w-full max-w-md bg-card/80 backdrop-blur-sm border-primary/20 shadow-lg">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <CardContent className="space-y-6 pt-6">
@@ -106,83 +106,87 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
               )}
             />
             
-            <div className="space-y-2">
-              <FormLabel>Date of Birth</FormLabel>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-4">
+               <div className="space-y-2">
+                <FormLabel>Date of Birth</FormLabel>
+                <div className="grid grid-cols-3 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="day"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Day" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {days.map(day => <SelectItem key={day} value={day.toString()}>{day}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="month"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Month" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {months.map(month => <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="year"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Year" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {years.map(year => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                 <FormMessage>{form.formState.errors.day?.message ? "The selected date is invalid." : ""}</FormMessage>
+              </div>
+
+              <div className="space-y-2">
                 <FormField
                   control={form.control}
-                  name="day"
+                  name="tob"
                   render={({ field }) => (
                     <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Day" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {days.map(day => <SelectItem key={day} value={day.toString()}>{day}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="month"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Month" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {months.map(month => <SelectItem key={month.value} value={month.value}>{month.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="year"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Year" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {years.map(year => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>Time of Birth</FormLabel>
+                      <FormControl>
+                         <CustomTimePicker value={field.value} onChange={field.onChange} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <FormMessage className="mt-2">{form.formState.errors.day?.message ? "The selected date is invalid." : ""}</FormMessage>
             </div>
-
-            <FormField
-              control={form.control}
-              name="tob"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Time of Birth</FormLabel>
-                  <FormControl>
-                    <Input type="time" {...field} className="h-10 text-base" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
           </CardContent>
           <CardFooter>
