@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { User, MessageCircle } from "lucide-react"
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -18,6 +18,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import type { FormValues } from "@/app/actions";
+import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,25 +40,6 @@ type SankalpaFormProps = {
   onSubmit: (values: FormValues) => void;
 };
 
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 101 }, (_, i) => (currentYear - i).toString());
-
-const months = [
-  { value: "0", label: "January" },
-  { value: "1", label: "February" },
-  { value: "2", label: "March" },
-  { value: "3", label: "April" },
-  { value: "4", label: "May" },
-  { value: "5", label: "June" },
-  { value: "6", label: "July" },
-  { value: "7", label: "August" },
-  { value: "8", label: "September" },
-  { value: "9", label: "October" },
-  { value: "10", label: "November" },
-  { value: "11", label: "December" },
-];
-
-
 export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,18 +49,8 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
     },
   });
 
-  const [year, month] = useWatch({
-    control: form.control,
-    name: ["dob.year", "dob.month"],
-  });
-
-  const daysInMonth = year && month ? new Date(parseInt(year), parseInt(month) + 1, 0).getDate() : 31;
-  const days = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
-
-  const handleFormSubmit = (data: any) => {
-    const { dob, ...rest } = data;
-    const date = new Date(parseInt(dob.year), parseInt(dob.month), parseInt(dob.day));
-    onSubmit({ ...rest, dob: date });
+  const handleFormSubmit = (data: z.infer<typeof formSchema>) => {
+    onSubmit(data);
   };
 
 
@@ -117,60 +92,50 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
               )}
             />
             
-            <div>
-              <FormLabel>Date of Birth</FormLabel>
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                <FormField
-                  control={form.control}
-                  name="dob.month"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Month" /></SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {months.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="dob.day"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                           <SelectTrigger><SelectValue placeholder="Day" /></SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {days.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="dob.year"
-                  render={({ field }) => (
-                    <FormItem>
-                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                           <SelectTrigger><SelectValue placeholder="Year" /></SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                           {years.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-              </div>
-               <FormMessage>{form.formState.errors.dob?.message}</FormMessage>
-            </div>
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date of Birth</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                        captionLayout="dropdown-buttons"
+                        fromYear={1900}
+                        toYear={new Date().getFullYear()}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -179,7 +144,9 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
                 <FormItem>
                   <FormLabel>Time of Birth</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} className="h-10 text-base" />
+                    <div className="w-full sm:w-2/3">
+                      <Input type="time" {...field} className="h-10 text-base"/>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,7 +154,7 @@ export function SankalpaForm({ onSubmit }: SankalpaFormProps) {
             />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-6">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6">
               Find My Rashi
             </Button>
           </CardFooter>
