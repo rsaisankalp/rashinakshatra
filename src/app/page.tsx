@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { SankalpaForm } from '@/components/sankalpa-form';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { ResultsDisplay } from '@/components/results-display';
@@ -50,6 +51,15 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8 font-body">
       <div className="w-full max-w-md mx-auto space-y-8">
         <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <Image 
+              src="https://i.postimg.cc/QNYyXy8M/2-removebg-preview.png"
+              alt="Sankalpa Siddhi Logo"
+              width={150}
+              height={150}
+              priority
+            />
+          </div>
           <h1 className="font-headline text-4xl sm:text-5xl font-bold text-primary">Find My Rashi Nakshatra</h1>
           <p className="text-muted-foreground mt-2">
             Enter your birth details to discover your Rashi and Nakshatra.
