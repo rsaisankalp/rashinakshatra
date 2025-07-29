@@ -53,7 +53,7 @@ export default function Home() {
         <div className="text-center">
           <div className="flex justify-center">
             <Image 
-              src="https://i.postimg.cc/QNYyXy8M/2-removebg-preview.png"
+              src="https://i.postimg.cc/W3ghSQLw/vds-aol-transparent.png"
               alt="Sankalpa Siddhi Logo"
               width={150}
               height={150}
