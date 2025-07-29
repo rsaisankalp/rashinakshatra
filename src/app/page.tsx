@@ -51,7 +51,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4 sm:p-8 font-body">
       <div className="w-full max-w-md mx-auto space-y-8">
         <div className="text-center">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center">
             <Image 
               src="https://i.postimg.cc/QNYyXy8M/2-removebg-preview.png"
               alt="Sankalpa Siddhi Logo"
